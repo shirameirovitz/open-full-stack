@@ -1,6 +1,15 @@
-const express = require('express')
-const app = express()
-app.use(express.json())
+const express = require('express');
+const app = express();
+app.use(express.json());
+const morgan = require("morgan");
+
+app.use(morgan("tiny"));
+
+// app.use(morgan({format: 'POST body length in bytes :req[Content-Length]', immediate: true}))
+
+morgan(":method :url :status :res[content-length]:body - :response-time ms")
+morgan.token("type", function (request, response) => JSON.stringify(Request.body))
+
 
 let phoneBook = [
     {
@@ -57,16 +66,20 @@ return Math.floor(Math.random() * (max- min) + min)
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
-
 if(!body) {
   return response.status(400).json({error: "content missing"})
 }
 if(!body.name) {
   return response.status(400).json({error: "name missing"})
 }
+if(phoneBook.find((person) => person.name === body.name))
+{
+  return response.status(400).json({error: "name has to be unique"})
+}
 if(!body.number) {
   return response.status(400).json({error: "number missing"})
 }
+
 const person = {
   id: generateId(phoneBook ,10000),
   name: body.name,
@@ -78,10 +91,11 @@ response.json(person)
 
 
 
-
-
   const PORT = 3001
   app.listen(PORT)
   console.log(`Server running on port ${PORT}`)
 
-  
+  const unknownEndpoint = (request, reponse) => {
+    reponse.status(404).send({error: " unknown endpoint"})
+  }
+  app.use(unknownEndpoint)
