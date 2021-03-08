@@ -6,9 +6,8 @@ const morgan = require("morgan");
 app.use(morgan("tiny"));
 
 // app.use(morgan({format: 'POST body length in bytes :req[Content-Length]', immediate: true}))
-
-morgan(":method :url :status :res[content-length]:body - :response-time ms")
-morgan.token("type", function (request, response) => JSON.stringify(Request.body))
+morgan.token('body', (req, res) => JSON.stringify(req.body));
+morgan(':method :url :status :response-time ms - :res[content-length] :body - :req[content-length]');
 
 
 let phoneBook = [
