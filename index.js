@@ -50,16 +50,13 @@ app.delete("/api/persons/:id", (request, response) => {
    response.status(204).end()
 })
 
+function genarateId (min ,max) {
+return Math.floor(Math.random() * (max- min) + min)
+}
 //POST a new person
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
-  const genarateId = () => {
-  const maxId = phoneBook.length > 0 
-  ? Math.max(...phoneBook.map(n => n.id))
-  : 0
-  return maxId + 1
-  }
 
 if(!body) {
   return response.status(400).json({error: "content missing"})
@@ -71,13 +68,12 @@ if(!body.number) {
   return response.status(400).json({error: "number missing"})
 }
 const person = {
-  id: generateId(),
+  id: generateId(phoneBook ,10000),
   name: body.name,
   number: body.number, 
 }
 phoneBook = phoneBook.concat(person)
-console.log(generateId())
-response.json(phoneBook)
+response.json(person)
 })
 
 
